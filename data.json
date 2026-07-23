@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1784812861725lxfpl",
+      "cliente": "Joremi",
+      "descricao": "Isencao IR",
+      "valorTotal": 1034.16,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-06-10",
+      "recebido": false
+    },
+    {
       "id": "l1784812830044w4ga7",
       "cliente": "Terezinha Lima",
       "descricao": "S/D",
