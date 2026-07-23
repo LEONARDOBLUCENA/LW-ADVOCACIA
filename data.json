@@ -1,13 +1,22 @@
 {
   "lancamentos": [
     {
+      "id": "l1784812678510x0v2n",
+      "cliente": "Loreni Franco",
+      "descricao": "Auxilio Doenca",
+      "valorTotal": 636.89,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-06-06",
+      "recebido": true
+    },
+    {
       "id": "l17848126342477s5ks",
       "cliente": "Welter Empreendimentos",
       "descricao": "Honorarios Adm",
       "valorTotal": 4863,
       "formaPagamento": "Pix",
       "dataRecebimento": "2026-06-05",
-      "recebido": false
+      "recebido": true
     }
   ]
 }
