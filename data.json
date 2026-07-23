@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1784813216565typ6g",
+      "cliente": "Luciano Steffen",
+      "descricao": "(Nathana)",
+      "valorTotal": 143.25,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-07-15",
+      "recebido": false
+    },
+    {
       "id": "l1784813155876i1xm3",
       "cliente": "Leonel Lima",
       "descricao": "Auxilio Doenca",
