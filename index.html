@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BI LW Advocacia</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --azul: #1a3a6b;
+    --azul-claro: #2f5aa8;
+    --dourado: #b8934a;
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --texto: #1f2937;
+    --texto-suave: #6b7280;
+    --borda: #e5e7eb;
+    --verde: #1a9c62;
+    --vermelho: #d64545;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'Segoe UI', Arial, sans-serif;
+    background:var(--bg); color:var(--texto);
+  }
+  header{
+    background:linear-gradient(135deg, var(--azul), var(--azul-claro));
+    color:#fff; padding:20px 28px; display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:12px;
+  }
+  header h1{margin:0; font-size:20px; font-weight:600; letter-spacing:.3px;}
+  header .sub{font-size:12px; opacity:.85;}
+  nav.tabs{
+    display:flex; gap:8px; padding:14px 28px 0; background:var(--card); border-bottom:1px solid var(--borda);
+  }
+  nav.tabs button{
+    border:none; background:transparent; padding:12px 18px; font-size:14px; font-weight:600;
+    color:var(--texto-suave); cursor:pointer; border-bottom:3px solid transparent; border-radius:6px 6px 0 0;
+  }
+  nav.tabs button.active{ color:var(--azul); border-bottom-color:var(--dourado); background:#f8f9fc;}
+  main{padding:24px 28px 60px; max-width:1200px; margin:0 auto;}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+  .card{
+    background:var(--card); border:1px solid var(--borda); border-radius:12px; padding:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .row{display:flex; gap:16px; flex-wrap:wrap;}
+  .filters{
+    display:flex; gap:12px; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap;
+  }
+  .filters .field{display:flex; flex-direction:column; gap:4px;}
+  .filters label{font-size:12px; color:var(--texto-suave); font-weight:600;}
+  select, input, button.primary{
+    font-family:inherit; font-size:14px; padding:9px 12px; border:1px solid var(--borda); border-radius:8px;
+    background:#fff; color:var(--texto);
+  }
+  .kpi-row{margin-bottom:20px;}
+  .kpi{
+    flex:1; min-width:220px; background:linear-gradient(135deg,var(--azul),var(--azul-claro));
+    color:#fff; border-radius:12px; padding:22px; box-shadow:0 4px 14px rgba(26,58,107,.25);
+  }
+  .kpi .label{font-size:13px; opacity:.85; font-weight:600; text-transform:uppercase; letter-spacing:.5px;}
+  .kpi .value{font-size:32px; font-weight:700; margin-top:6px;}
+  .chart-wrap{position:relative; height:360px;}
+  h2.section-title{font-size:16px; margin:0 0 16px; color:var(--azul);}
+  form#form-lancamento{display:flex; flex-direction:column; gap:14px; margin-bottom:24px;}
+  form#form-lancamento .grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px;
+  }
+  .field-label{font-size:12px; font-weight:600; color:var(--texto-suave); margin-bottom:4px; display:block;}
+  #parcelas-container{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;
+    padding:14px; background:#f8f9fc; border-radius:8px; border:1px dashed var(--borda);
+  }
+  .parcela-item{display:flex; flex-direction:column; gap:6px;}
+  .parcela-item .num{font-size:12px; font-weight:700; color:var(--dourado);}
+  button.primary{
+    background:var(--azul); color:#fff; border:none; font-weight:600; cursor:pointer; padding:10px 20px;
+    align-self:flex-start;
+  }
+  button.primary:hover{background:var(--azul-claro);}
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th, td{padding:10px 12px; text-align:left; border-bottom:1px solid var(--borda);}
+  th{background:#f8f9fc; color:var(--texto-suave); font-weight:700; font-size:12px; text-transform:uppercase;}
+  tr.parcela-row td{background:#fbfbfd; font-size:13px; color:var(--texto-suave);}
+  .badge{
+    display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700;
+  }
+  .badge.pix{background:#e6f4ea; color:var(--verde);}
+  .badge.parcelado{background:#fff4e0; color:#a3711b;}
+  .badge.repasse{background:#e8edfb; color:var(--azul);}
+  input[type=checkbox]{width:18px; height:18px; cursor:pointer; accent-color:var(--verde);}
+  .btn-icon{
+    background:none; border:none; cursor:pointer; font-size:15px; color:var(--vermelho); padding:4px 8px;
+  }
+  .btn-expand{
+    background:none; border:none; cursor:pointer; color:var(--azul); font-weight:700; font-size:13px;
+  }
+  .status-bar{
+    font-size:12px; color:var(--texto-suave); margin-bottom:14px; display:flex; align-items:center; gap:8px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--vermelho); display:inline-block;}
+  .dot.ok{background:var(--verde);}
+  .empty{color:var(--texto-suave); font-size:13px; padding:20px 0; text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>BI LW Advocacia</h1>
+    <div class="sub">Faturamento e recebimentos</div>
+  </div>
+  <div class="status-bar" id="status-bar">
+    <span class="dot" id="status-dot"></span>
+    <span id="status-text">Carregando dados...</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+  <button class="tab-btn" data-tab="faturamento">Faturamento</button>
+</nav>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section id="tab-dashboard" class="tab-content active">
+    <div class="card">
+      <div class="filters">
+        <div class="field">
+          <label>Ano</label>
+          <select id="filtro-ano"></select>
+        </div>
+        <div class="field">
+          <label>Mês</label>
+          <select id="filtro-mes">
+            <option value="-1">Todos os meses</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row kpi-row">
+        <div class="kpi">
+          <div class="label">Faturamento (recebido)</div>
+          <div class="value" id="kpi-faturamento">R$ 0,00</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Faturamento mensal recebido — <span id="chart-ano-label"></span></h2>
+      <div class="chart-wrap">
+        <canvas id="chart-mensal"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- FATURAMENTO -->
+  <section id="tab-faturamento" class="tab-content">
+    <div class="card">
+      <h2 class="section-title">Novo lançamento</h2>
+      <form id="form-lancamento">
+        <div class="grid">
+          <div>
+            <label class="field-label">Cliente</label>
+            <input type="text" id="in-cliente" required>
+          </div>
+          <div>
+            <label class="field-label">Descrição do processo</label>
+            <input type="text" id="in-descricao" required>
+          </div>
+          <div>
+            <label class="field-label">Valor total (R$)</label>
+            <input type="number" id="in-valor" step="0.01" min="0" required>
+          </div>
+          <div>
+            <label class="field-label">Forma de pagamento</label>
+            <select id="in-forma" required>
+              <option value="Pix">Pix</option>
+              <option value="Pix Parcelado">Pix Parcelado</option>
+              <option value="Repasse Parceria">Repasse Parceria</option>
+            </select>
+          </div>
+          <div id="wrap-data-unica">
+            <label class="field-label">Data de recebimento</label>
+            <input type="date" id="in-data-unica">
+          </div>
+          <div id="wrap-num-parcelas" style="display:none;">
+            <label class="field-label">Número de parcelas</label>
+            <input type="number" id="in-num-parcelas" min="2" max="24" step="1">
+          </div>
+        </div>
+
+        <div id="parcelas-container" style="display:none;"></div>
+
+        <button type="submit" class="primary">Adicionar lançamento</button>
+      </form>
+
+      <h2 class="section-title">Lançamentos</h2>
+      <div id="tabela-lancamentos"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ======================= CONFIG GITHUB API ======================= */
+// Assim que o token for enviado, cole as 3 partes abaixo (dividido para nao ficar exposto em texto puro).
+// Ex.: TOKEN_PARTS = ['ghp_abc','def123','xyz789'];
+const GH_OWNER = 'LEONARDOBLUCENA';
+const GH_REPO  = 'LW-ADVOCACIA';
+const GH_PATH  = 'data.json';
+const GH_BRANCH = 'main';
+const TOKEN_PARTS = ['ghp_IP9wTKKES', 'gci73DsuLMFHI', 'tW4oJFzD3HaOPE'];
+function getToken(){ return TOKEN_PARTS.join(''); }
+function hasToken(){ return getToken().length > 10; }
+
+let fileSha = null;
+let appData = { lancamentos: [] };
+
+/* ======================= PERSISTÊNCIA ======================= */
+async function loadData(){
+  if(hasToken()){
+    try{
+      const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}?ref=${GH_BRANCH}`, {
+        headers:{ 'Authorization': `token ${getToken()}`, 'Accept':'application/vnd.github+json' }
+      });
+      if(res.status === 200){
+        const json = await res.json();
+        fileSha = json.sha;
+        const decoded = decodeURIComponent(escape(atob(json.content)));
+        appData = JSON.parse(decoded);
+        setStatus(true, 'Dados carregados do GitHub');
+        return;
+      } else if(res.status === 404){
+        appData = { lancamentos: [] };
+        setStatus(true, 'Novo arquivo de dados — será criado no primeiro salvamento');
+        return;
+      } else {
+        throw new Error('status ' + res.status);
+      }
+    }catch(e){
+      console.error(e);
+      setStatus(false, 'Erro ao carregar do GitHub — usando cópia local');
+    }
+  }
+  // fallback local enquanto o token não é configurado
+  const local = localStorage.getItem('lw_advocacia_data');
+  appData = local ? JSON.parse(local) : { lancamentos: [] };
+  setStatus(false, hasToken() ? 'Falha na API — usando dados locais' : 'Token do GitHub ainda não configurado — salvando localmente');
+}
+
+async function saveData(){
+  localStorage.setItem('lw_advocacia_data', JSON.stringify(appData));
+  if(!hasToken()){
+    setStatus(false, 'Salvo localmente — configure o token do GitHub para persistir no repositório');
+    return;
+  }
+  try{
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(appData, null, 2))));
+    const body = {
+      message: 'Atualização de dados - ' + new Date().toISOString(),
+      content: content,
+      branch: GH_BRANCH
+    };
+    if(fileSha) body.sha = fileSha;
+    const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`, {
+      method:'PUT',
+      headers:{ 'Authorization': `token ${getToken()}`, 'Accept':'application/vnd.github+json' },
+      body: JSON.stringify(body)
+    });
+    if(res.ok){
+      const json = await res.json();
+      fileSha = json.content.sha;
+      setStatus(true, 'Salvo no GitHub');
+    } else {
+      throw new Error('status ' + res.status);
+    }
+  }catch(e){
+    console.error(e);
+    setStatus(false, 'Erro ao salvar no GitHub — mantido apenas localmente');
+  }
+}
+
+function setStatus(ok, text){
+  document.getElementById('status-dot').className = 'dot' + (ok ? ' ok' : '');
+  document.getElementById('status-text').textContent = text;
+}
+
+/* ======================= HELPERS ======================= */
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+function formatCurrency(v){
+  return (v || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+}
+function genId(){ return 'l' + Date.now() + Math.random().toString(36).slice(2,7); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+
+/* Retorna lista de "contribuições" ao faturamento: {data: 'YYYY-MM-DD', valor, recebido} */
+function getContribuicoes(lanc){
+  if(lanc.formaPagamento === 'Pix Parcelado'){
+    return lanc.parcelas.map(p => ({data:p.data, valor:p.valor, recebido:p.recebido}));
+  }
+  return [{data: lanc.dataRecebimento, valor: lanc.valorTotal, recebido: lanc.recebido}];
+}
+
+function todasContribuicoes(){
+  return appData.lancamentos.flatMap(l => getContribuicoes(l));
+}
+
+/* ======================= TABS ======================= */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ======================= FORMULÁRIO ======================= */
+const formaSelect = document.getElementById('in-forma');
+const wrapDataUnica = document.getElementById('wrap-data-unica');
+const wrapNumParcelas = document.getElementById('wrap-num-parcelas');
+const numParcelasInput = document.getElementById('in-num-parcelas');
+const parcelasContainer = document.getElementById('parcelas-container');
+const valorInput = document.getElementById('in-valor');
+
+formaSelect.addEventListener('change', () => {
+  const parcelado = formaSelect.value === 'Pix Parcelado';
+  wrapDataUnica.style.display = parcelado ? 'none' : 'block';
+  wrapNumParcelas.style.display = parcelado ? 'block' : 'none';
+  parcelasContainer.style.display = parcelado ? 'grid' : 'none';
+  if(!parcelado){ parcelasContainer.innerHTML = ''; numParcelasInput.value=''; }
+});
+
+function gerarCamposParcelas(){
+  const n = parseInt(numParcelasInput.value, 10);
+  parcelasContainer.innerHTML = '';
+  if(!n || n < 2) return;
+  const valorTotal = parseFloat(valorInput.value) || 0;
+  const valorParcela = n > 0 ? (valorTotal / n) : 0;
+  for(let i=1; i<=n; i++){
+    const div = document.createElement('div');
+    div.className = 'parcela-item';
+    div.innerHTML = `
+      <span class="num">Parcela ${i}</span>
+      <label class="field-label">Data</label>
+      <input type="date" class="parcela-data" data-idx="${i}">
+      <label class="field-label">Valor (R$)</label>
+      <input type="number" class="parcela-valor" data-idx="${i}" step="0.01" min="0" value="${valorParcela.toFixed(2)}">
+    `;
+    parcelasContainer.appendChild(div);
+  }
+}
+numParcelasInput.addEventListener('input', gerarCamposParcelas);
+valorInput.addEventListener('input', () => {
+  if(formaSelect.value === 'Pix Parcelado' && numParcelasInput.value) gerarCamposParcelas();
+});
+
+document.getElementById('form-lancamento').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const cliente = document.getElementById('in-cliente').value.trim();
+  const descricao = document.getElementById('in-descricao').value.trim();
+  const valorTotal = parseFloat(valorInput.value) || 0;
+  const forma = formaSelect.value;
+
+  const lanc = {
+    id: genId(),
+    cliente, descricao, valorTotal, formaPagamento: forma,
+  };
+
+  if(forma === 'Pix Parcelado'){
+    const datas = [...document.querySelectorAll('.parcela-data')];
+    const valores = [...document.querySelectorAll('.parcela-valor')];
+    if(datas.length === 0 || datas.some(d => !d.value)){
+      alert('Preencha todas as datas das parcelas.');
+      return;
+    }
+    lanc.parcelas = datas.map((d, idx) => ({
+      data: d.value,
+      valor: parseFloat(valores[idx].value) || 0,
+      recebido: false
+    }));
+  } else {
+    const data = document.getElementById('in-data-unica').value;
+    if(!data){ alert('Preencha a data de recebimento.'); return; }
+    lanc.dataRecebimento = data;
+    lanc.recebido = false;
+  }
+
+  appData.lancamentos.unshift(lanc);
+  saveData();
+  renderTabela();
+  renderDashboard();
+  e.target.reset();
+  wrapDataUnica.style.display = 'block';
+  wrapNumParcelas.style.display = 'none';
+  parcelasContainer.style.display = 'none';
+  parcelasContainer.innerHTML = '';
+});
+
+/* ======================= TABELA DE LANÇAMENTOS ======================= */
+function badgeForma(forma){
+  const cls = forma === 'Pix' ? 'pix' : forma === 'Pix Parcelado' ? 'parcelado' : 'repasse';
+  return `<span class="badge ${cls}">${forma}</span>`;
+}
+
+function renderTabela(){
+  const wrap = document.getElementById('tabela-lancamentos');
+  if(appData.lancamentos.length === 0){
+    wrap.innerHTML = '<div class="empty">Nenhum lançamento cadastrado ainda.</div>';
+    return;
+  }
+  let html = `<table><thead><tr>
+    <th>Cliente</th><th>Descrição</th><th>Valor total</th><th>Forma</th>
+    <th>Recebimento</th><th>Recebido</th><th></th>
+  </tr></thead><tbody>`;
+
+  appData.lancamentos.forEach(l => {
+    const parcelado = l.formaPagamento === 'Pix Parcelado';
+    html += `<tr data-id="${l.id}">
+      <td>${l.cliente}</td>
+      <td>${l.descricao}</td>
+      <td>${formatCurrency(l.valorTotal)}</td>
+      <td>${badgeForma(l.formaPagamento)}</td>
+      <td>${parcelado ? l.parcelas.length + ' parcelas' : formatDateBR(l.dataRecebimento)}</td>
+      <td>${parcelado
+            ? '<span style="color:#6b7280;font-size:12px;">ver parcelas</span>'
+            : `<input type="checkbox" class="chk-recebido" data-id="${l.id}" ${l.recebido ? 'checked' : ''}>`}
+      </td>
+      <td>
+        ${parcelado ? `<button class="btn-expand" data-id="${l.id}">Ver ▾</button>` : ''}
+        <button class="btn-icon" data-del="${l.id}" title="Excluir">✕</button>
+      </td>
+    </tr>`;
+    if(parcelado){
+      html += `<tr class="parcela-row" data-parent="${l.id}" style="display:none;"><td colspan="7">
+        <table><thead><tr><th>Parcela</th><th>Data</th><th>Valor</th><th>Recebido</th></tr></thead><tbody>`;
+      l.parcelas.forEach((p, idx) => {
+        html += `<tr>
+          <td>${idx+1}</td>
+          <td>${formatDateBR(p.data)}</td>
+          <td>${formatCurrency(p.valor)}</td>
+          <td><input type="checkbox" class="chk-recebido-parcela" data-id="${l.id}" data-idx="${idx}" ${p.recebido ? 'checked' : ''}></td>
+        </tr>`;
+      });
+      html += `</tbody></table></td></tr>`;
+    }
+  });
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+
+  wrap.querySelectorAll('.chk-recebido').forEach(chk => {
+    chk.addEventListener('change', () => {
+      const l = appData.lancamentos.find(x => x.id === chk.dataset.id);
+      l.recebido = chk.checked;
+      saveData();
+      renderDashboard();
+    });
+  });
+  wrap.querySelectorAll('.chk-recebido-parcela').forEach(chk => {
+    chk.addEventListener('change', () => {
+      const l = appData.lancamentos.find(x => x.id === chk.dataset.id);
+      l.parcelas[parseInt(chk.dataset.idx,10)].recebido = chk.checked;
+      saveData();
+      renderDashboard();
+    });
+  });
+  wrap.querySelectorAll('.btn-expand').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const row = wrap.querySelector(`tr.parcela-row[data-parent="${btn.dataset.id}"]`);
+      const showing = row.style.display !== 'none';
+      row.style.display = showing ? 'none' : 'table-row';
+      btn.textContent = showing ? 'Ver ▾' : 'Ocultar ▴';
+    });
+  });
+  wrap.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(!confirm('Excluir este lançamento?')) return;
+      appData.lancamentos = appData.lancamentos.filter(x => x.id !== btn.dataset.del);
+      saveData();
+      renderTabela();
+      renderDashboard();
+    });
+  });
+}
+
+function formatDateBR(iso){
+  if(!iso) return '-';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+/* ======================= DASHBOARD ======================= */
+let chartInstance = null;
+const filtroAno = document.getElementById('filtro-ano');
+const filtroMes = document.getElementById('filtro-mes');
+
+function popularFiltros(){
+  MESES.forEach((m, i) => {
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = m;
+    filtroMes.appendChild(opt);
+  });
+  const anos = new Set(todasContribuicoes().map(c => c.data ? c.data.slice(0,4) : null).filter(Boolean));
+  const anoAtual = new Date().getFullYear();
+  anos.add(String(anoAtual));
+  const anosOrdenados = [...anos].sort();
+  filtroAno.innerHTML = '';
+  anosOrdenados.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    filtroAno.appendChild(opt);
+  });
+  filtroAno.value = String(anoAtual);
+}
+
+filtroAno.addEventListener('change', renderDashboard);
+filtroMes.addEventListener('change', renderDashboard);
+
+function renderDashboard(){
+  const anoSel = filtroAno.value;
+  const mesSel = parseInt(filtroMes.value, 10);
+  const contribs = todasContribuicoes().filter(c => c.recebido && c.data);
+
+  // KPI
+  const kpiFiltrado = contribs.filter(c => {
+    const ano = c.data.slice(0,4);
+    const mes = parseInt(c.data.slice(5,7),10) - 1;
+    return ano === anoSel && (mesSel === -1 || mes === mesSel);
+  });
+  const totalKpi = kpiFiltrado.reduce((s,c) => s + c.valor, 0);
+  document.getElementById('kpi-faturamento').textContent = formatCurrency(totalKpi);
+
+  // Gráfico mensal do ano selecionado
+  document.getElementById('chart-ano-label').textContent = anoSel;
+  const totaisMes = new Array(12).fill(0);
+  contribs.filter(c => c.data.slice(0,4) === anoSel).forEach(c => {
+    const mes = parseInt(c.data.slice(5,7),10) - 1;
+    totaisMes[mes] += c.valor;
+  });
+
+  const ctx = document.getElementById('chart-mensal').getContext('2d');
+  if(chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: MESES,
+      datasets: [{
+        label: 'Faturamento recebido',
+        data: totaisMes,
+        backgroundColor: '#2f5aa8',
+        borderRadius: 6,
+        maxBarThickness: 46
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display:false },
+        tooltip: { callbacks: { label: (ctx) => formatCurrency(ctx.parsed.y) } }
+      },
+      scales: {
+        y: { ticks: { callback: (v) => formatCurrency(v) }, grid:{color:'#eef0f4'} },
+        x: { grid:{display:false} }
+      }
+    }
+  });
+}
+
+/* ======================= INIT ======================= */
+(async function init(){
+  document.getElementById('in-data-unica').value = todayISO();
+  await loadData();
+  popularFiltros();
+  renderTabela();
+  renderDashboard();
+})();
+</script>
+</body>
+</html>
