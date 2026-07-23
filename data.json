@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l17848129701309qgjn",
+      "cliente": "Janete dos Santos",
+      "descricao": "Auxilio Doenca",
+      "valorTotal": 407.7,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-06-16",
+      "recebido": false
+    },
+    {
       "id": "l1784812903377s8f18",
       "cliente": "Vilson",
       "descricao": "Aposentadoria",
