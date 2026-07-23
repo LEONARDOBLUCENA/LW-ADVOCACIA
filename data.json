@@ -1,6 +1,25 @@
 {
   "lancamentos": [
     {
+      "id": "l1784813155876i1xm3",
+      "cliente": "Leonel Lima",
+      "descricao": "Auxilio Doenca",
+      "valorTotal": 7700,
+      "formaPagamento": "Pix Parcelado",
+      "parcelas": [
+        {
+          "data": "2026-07-10",
+          "valor": 3850,
+          "recebido": false
+        },
+        {
+          "data": "2026-08-10",
+          "valor": 3850,
+          "recebido": false
+        }
+      ]
+    },
+    {
       "id": "l1784813116508lp3er",
       "cliente": "Welter Empreendimentos",
       "descricao": "Honorarios Adm",
