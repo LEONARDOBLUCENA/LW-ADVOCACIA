@@ -1,13 +1,22 @@
 {
   "lancamentos": [
     {
+      "id": "l1784813062669vjhys",
+      "cliente": "Robson",
+      "descricao": "Auxilio (pgto parcial)",
+      "valorTotal": 1283.83,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-06-26",
+      "recebido": false
+    },
+    {
       "id": "l1784813005701zb2e3",
       "cliente": "Roberto Felipe Flach",
       "descricao": "Auxilio Acidente",
       "valorTotal": 1104.83,
       "formaPagamento": "Pix",
       "dataRecebimento": "2026-06-16",
-      "recebido": false
+      "recebido": true
     },
     {
       "id": "l17848129701309qgjn",
