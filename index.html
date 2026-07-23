@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BI LW Advocacia</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
     --azul: #1a3a6b;
@@ -147,6 +148,20 @@
           <div class="value" id="kpi-faturamento">R$ 0,00</div>
         </div>
       </div>
+      <div class="row kpi-row">
+        <div class="kpi" style="background:linear-gradient(135deg,#1a9c62,#2fbf7f);">
+          <div class="label">Pix</div>
+          <div class="value" id="kpi-pix">R$ 0,00</div>
+        </div>
+        <div class="kpi" style="background:linear-gradient(135deg,#a3711b,#c98f2e);">
+          <div class="label">Pix Parcelado</div>
+          <div class="value" id="kpi-pix-parcelado">R$ 0,00</div>
+        </div>
+        <div class="kpi" style="background:linear-gradient(135deg,#1a3a6b,#2f5aa8);">
+          <div class="label">Repasse Parceria</div>
+          <div class="value" id="kpi-repasse">R$ 0,00</div>
+        </div>
+      </div>
 
       <h2 class="section-title">Faturamento mensal recebido — <span id="chart-ano-label"></span></h2>
       <div class="chart-wrap">
@@ -220,6 +235,10 @@
           </select>
         </div>
       </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+        <span></span>
+        <button type="button" class="primary" id="btn-exportar-excel" style="background:var(--verde);">Exportar Excel</button>
+      </div>
       <div id="tabela-lancamentos"></div>
     </div>
   </section>
@@ -234,7 +253,7 @@ const GH_OWNER = 'LEONARDOBLUCENA';
 const GH_REPO  = 'LW-ADVOCACIA';
 const GH_PATH  = 'data.json';
 const GH_BRANCH = 'main';
-const TOKEN_PARTS = ['ghp_IP9wTKKESgci', '73DsuLMFHItW4oJF', 'zDdasfsdga3HaOPE'];
+const TOKEN_PARTS = ['ghp_SAzzpR8S9', 'AdGZC7rFPiSU3', '7vXMIqdJ4c1JqK'];
 function getToken(){ return TOKEN_PARTS.join(''); }
 function hasToken(){ return getToken().length > 10; }
 
@@ -318,12 +337,20 @@ function formatCurrency(v){
 function genId(){ return 'l' + Date.now() + Math.random().toString(36).slice(2,7); }
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 
-/* Retorna lista de "contribuições" ao faturamento: {data: 'YYYY-MM-DD', valor, recebido} */
+/* Retorna lista de "contribuições" ao faturamento: {data, valor, recebido, formaPagamento, cliente, descricao, parcela} */
 function getContribuicoes(lanc){
   if(lanc.formaPagamento === 'Pix Parcelado'){
-    return lanc.parcelas.map(p => ({data:p.data, valor:p.valor, recebido:p.recebido}));
+    return lanc.parcelas.map((p, idx) => ({
+      data:p.data, valor:p.valor, recebido:p.recebido,
+      formaPagamento: lanc.formaPagamento, cliente: lanc.cliente, descricao: lanc.descricao,
+      parcela: (idx+1) + '/' + lanc.parcelas.length
+    }));
   }
-  return [{data: lanc.dataRecebimento, valor: lanc.valorTotal, recebido: lanc.recebido}];
+  return [{
+    data: lanc.dataRecebimento, valor: lanc.valorTotal, recebido: lanc.recebido,
+    formaPagamento: lanc.formaPagamento, cliente: lanc.cliente, descricao: lanc.descricao,
+    parcela: '-'
+  }];
 }
 
 function todasContribuicoes(){
@@ -636,6 +663,34 @@ filtroFatCliente.addEventListener('change', renderTabela);
 filtroFatMes.addEventListener('change', renderTabela);
 filtroFatAno.addEventListener('change', renderTabela);
 
+document.getElementById('btn-exportar-excel').addEventListener('click', () => {
+  const clienteSel = filtroFatCliente.value;
+  const mesSel = parseInt(filtroFatMes.value, 10);
+  const anoSel = filtroFatAno.value;
+
+  const lista = appData.lancamentos.filter(l => lancamentoNoFiltro(l, clienteSel, mesSel, anoSel));
+  const linhas = lista.flatMap(l => getContribuicoes(l).map(c => ({
+    'Cliente': c.cliente,
+    'Descrição do Processo': c.descricao,
+    'Forma de Pagamento': c.formaPagamento,
+    'Parcela': c.parcela,
+    'Valor': c.valor,
+    'Data de Recebimento': formatDateBR(c.data),
+    'Recebido': c.recebido ? 'Sim' : 'Não'
+  })));
+
+  if(linhas.length === 0){
+    alert('Não há lançamentos para exportar com o filtro atual.');
+    return;
+  }
+
+  const ws = XLSX.utils.json_to_sheet(linhas);
+  ws['!cols'] = [{wch:22},{wch:30},{wch:18},{wch:10},{wch:14},{wch:16},{wch:10}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Faturamento');
+  XLSX.writeFile(wb, 'faturamento_lw_advocacia.xlsx');
+});
+
 /* ======================= DASHBOARD ======================= */
 let chartInstance = null;
 const filtroAno = document.getElementById('filtro-ano');
@@ -676,6 +731,11 @@ function renderDashboard(){
   });
   const totalKpi = kpiFiltrado.reduce((s,c) => s + c.valor, 0);
   document.getElementById('kpi-faturamento').textContent = formatCurrency(totalKpi);
+
+  const somaPorForma = (forma) => kpiFiltrado.filter(c => c.formaPagamento === forma).reduce((s,c) => s + c.valor, 0);
+  document.getElementById('kpi-pix').textContent = formatCurrency(somaPorForma('Pix'));
+  document.getElementById('kpi-pix-parcelado').textContent = formatCurrency(somaPorForma('Pix Parcelado'));
+  document.getElementById('kpi-repasse').textContent = formatCurrency(somaPorForma('Repasse Parceria'));
 
   // Gráfico mensal do ano selecionado
   document.getElementById('chart-ano-label').textContent = anoSel;
