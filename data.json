@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1784813094482i2y2l",
+      "cliente": "Marcia",
+      "descricao": "(Nathana)",
+      "valorTotal": 150,
+      "formaPagamento": "Repasse Parceria",
+      "dataRecebimento": "2026-06-30",
+      "recebido": false
+    },
+    {
       "id": "l1784813062669vjhys",
       "cliente": "Robson",
       "descricao": "Auxilio (pgto parcial)",
