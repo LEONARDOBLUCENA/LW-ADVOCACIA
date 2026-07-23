@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1784813358607f2u0n",
+      "cliente": "Clasiele",
+      "descricao": "Aux Doenca",
+      "valorTotal": 266,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-07-15",
+      "recebido": true
+    },
+    {
       "id": "l1784813287502qp615",
       "cliente": "Mauricio Vargas",
       "descricao": "Aposentadoria",
