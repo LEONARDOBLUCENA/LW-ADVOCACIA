@@ -8,8 +8,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
-    --azul: #1a3a6b;
-    --azul-claro: #2f5aa8;
+    --azul: #6b3fa0;
+    --azul-claro: #9163c9;
     --dourado: #b8934a;
     --bg: #f4f6fa;
     --card: #ffffff;
@@ -90,7 +90,7 @@
   }
   .badge.pix{background:#e6f4ea; color:var(--verde);}
   .badge.parcelado{background:#fff4e0; color:#a3711b;}
-  .badge.repasse{background:#e8edfb; color:var(--azul);}
+  .badge.repasse{background:#efe6fb; color:var(--azul);}
   input[type=checkbox]{width:18px; height:18px; cursor:pointer; accent-color:var(--verde);}
   .btn-icon{
     background:none; border:none; cursor:pointer; font-size:15px; color:var(--vermelho); padding:4px 8px;
@@ -157,7 +157,7 @@
           <div class="label">Pix Parcelado</div>
           <div class="value" id="kpi-pix-parcelado">R$ 0,00</div>
         </div>
-        <div class="kpi" style="background:linear-gradient(135deg,#1a3a6b,#2f5aa8);">
+        <div class="kpi" style="background:linear-gradient(135deg,#6b3fa0,#9163c9);">
           <div class="label">Repasse Parceria</div>
           <div class="value" id="kpi-repasse">R$ 0,00</div>
         </div>
@@ -754,7 +754,7 @@ function renderDashboard(){
       datasets: [{
         label: 'Faturamento recebido',
         data: totaisMes,
-        backgroundColor: '#2f5aa8',
+        backgroundColor: '#6b3fa0',
         borderRadius: 6,
         maxBarThickness: 46
       }]
