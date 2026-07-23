@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1784813116508lp3er",
+      "cliente": "Welter Empreendimentos",
+      "descricao": "Honorarios Adm",
+      "valorTotal": 4863,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-07-05",
+      "recebido": false
+    },
+    {
       "id": "l1784813094482i2y2l",
       "cliente": "Marcia",
       "descricao": "(Nathana)",
@@ -16,7 +25,7 @@
       "valorTotal": 1283.83,
       "formaPagamento": "Pix",
       "dataRecebimento": "2026-06-26",
-      "recebido": false
+      "recebido": true
     },
     {
       "id": "l1784813005701zb2e3",
