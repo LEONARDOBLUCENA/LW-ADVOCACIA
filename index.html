@@ -159,7 +159,7 @@
   <section id="tab-faturamento" class="tab-content">
     <div class="card">
       <h2 class="section-title">Novo lançamento</h2>
-      <form id="form-lancamento">
+      <form id="form-lancamento" data-editing-id="">
         <div class="grid">
           <div>
             <label class="field-label">Cliente</label>
@@ -193,10 +193,33 @@
 
         <div id="parcelas-container" style="display:none;"></div>
 
-        <button type="submit" class="primary">Adicionar lançamento</button>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button type="submit" class="primary" id="btn-submit-lancamento">Adicionar lançamento</button>
+          <button type="button" class="btn-expand" id="btn-cancelar-edicao" style="display:none;">Cancelar edição</button>
+        </div>
       </form>
 
       <h2 class="section-title">Lançamentos</h2>
+      <div class="filters">
+        <div class="field">
+          <label>Cliente</label>
+          <select id="filtro-fat-cliente">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Mês</label>
+          <select id="filtro-fat-mes">
+            <option value="-1">Todos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Ano</label>
+          <select id="filtro-fat-ano">
+            <option value="">Todos</option>
+          </select>
+        </div>
+      </div>
       <div id="tabela-lancamentos"></div>
     </div>
   </section>
@@ -211,7 +234,7 @@ const GH_OWNER = 'LEONARDOBLUCENA';
 const GH_REPO  = 'LW-ADVOCACIA';
 const GH_PATH  = 'data.json';
 const GH_BRANCH = 'main';
-const TOKEN_PARTS = ['ghp_IP9wTKKES', 'gci73DsuLMFHI', 'tW4oJFzD3HaOPE'];
+const TOKEN_PARTS = ['ghp_IP9wTKKESgci', '73DsuLMFHItW4oJF', 'zDdasfsdga3HaOPE'];
 function getToken(){ return TOKEN_PARTS.join(''); }
 function hasToken(){ return getToken().length > 10; }
 
@@ -357,15 +380,74 @@ valorInput.addEventListener('input', () => {
   if(formaSelect.value === 'Pix Parcelado' && numParcelasInput.value) gerarCamposParcelas();
 });
 
-document.getElementById('form-lancamento').addEventListener('submit', (e) => {
+const formLancamento = document.getElementById('form-lancamento');
+const btnSubmitLancamento = document.getElementById('btn-submit-lancamento');
+const btnCancelarEdicao = document.getElementById('btn-cancelar-edicao');
+
+function resetFormulario(){
+  formLancamento.reset();
+  formLancamento.dataset.editingId = '';
+  btnSubmitLancamento.textContent = 'Adicionar lançamento';
+  btnCancelarEdicao.style.display = 'none';
+  document.getElementById('in-data-unica').value = todayISO();
+  wrapDataUnica.style.display = 'block';
+  wrapNumParcelas.style.display = 'none';
+  parcelasContainer.style.display = 'none';
+  parcelasContainer.innerHTML = '';
+}
+
+function iniciarEdicao(id){
+  const l = appData.lancamentos.find(x => x.id === id);
+  if(!l) return;
+  formLancamento.dataset.editingId = id;
+  document.getElementById('in-cliente').value = l.cliente;
+  document.getElementById('in-descricao').value = l.descricao;
+  valorInput.value = l.valorTotal;
+  formaSelect.value = l.formaPagamento;
+
+  const parcelado = l.formaPagamento === 'Pix Parcelado';
+  wrapDataUnica.style.display = parcelado ? 'none' : 'block';
+  wrapNumParcelas.style.display = parcelado ? 'block' : 'none';
+  parcelasContainer.style.display = parcelado ? 'grid' : 'none';
+
+  if(parcelado){
+    numParcelasInput.value = l.parcelas.length;
+    parcelasContainer.innerHTML = '';
+    l.parcelas.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'parcela-item';
+      div.innerHTML = `
+        <span class="num">Parcela ${i+1}</span>
+        <label class="field-label">Data</label>
+        <input type="date" class="parcela-data" data-idx="${i+1}" value="${p.data || ''}">
+        <label class="field-label">Valor (R$)</label>
+        <input type="number" class="parcela-valor" data-idx="${i+1}" step="0.01" min="0" value="${p.valor}">
+      `;
+      parcelasContainer.appendChild(div);
+    });
+  } else {
+    document.getElementById('in-data-unica').value = l.dataRecebimento || '';
+  }
+
+  btnSubmitLancamento.textContent = 'Salvar alterações';
+  btnCancelarEdicao.style.display = 'inline-block';
+  document.querySelector('.tab-btn[data-tab="faturamento"]').click();
+  formLancamento.scrollIntoView({behavior:'smooth'});
+}
+
+btnCancelarEdicao.addEventListener('click', resetFormulario);
+
+formLancamento.addEventListener('submit', (e) => {
   e.preventDefault();
   const cliente = document.getElementById('in-cliente').value.trim();
   const descricao = document.getElementById('in-descricao').value.trim();
   const valorTotal = parseFloat(valorInput.value) || 0;
   const forma = formaSelect.value;
+  const editingId = formLancamento.dataset.editingId;
+  const existente = editingId ? appData.lancamentos.find(x => x.id === editingId) : null;
 
   const lanc = {
-    id: genId(),
+    id: existente ? existente.id : genId(),
     cliente, descricao, valorTotal, formaPagamento: forma,
   };
 
@@ -379,24 +461,27 @@ document.getElementById('form-lancamento').addEventListener('submit', (e) => {
     lanc.parcelas = datas.map((d, idx) => ({
       data: d.value,
       valor: parseFloat(valores[idx].value) || 0,
-      recebido: false
+      recebido: existente && existente.parcelas && existente.parcelas[idx] ? existente.parcelas[idx].recebido : false
     }));
   } else {
     const data = document.getElementById('in-data-unica').value;
     if(!data){ alert('Preencha a data de recebimento.'); return; }
     lanc.dataRecebimento = data;
-    lanc.recebido = false;
+    lanc.recebido = existente ? !!existente.recebido : false;
   }
 
-  appData.lancamentos.unshift(lanc);
+  if(existente){
+    const idx = appData.lancamentos.findIndex(x => x.id === existente.id);
+    appData.lancamentos[idx] = lanc;
+  } else {
+    appData.lancamentos.unshift(lanc);
+  }
+
   saveData();
+  popularFiltrosFaturamento();
   renderTabela();
   renderDashboard();
-  e.target.reset();
-  wrapDataUnica.style.display = 'block';
-  wrapNumParcelas.style.display = 'none';
-  parcelasContainer.style.display = 'none';
-  parcelasContainer.innerHTML = '';
+  resetFormulario();
 });
 
 /* ======================= TABELA DE LANÇAMENTOS ======================= */
@@ -405,10 +490,33 @@ function badgeForma(forma){
   return `<span class="badge ${cls}">${forma}</span>`;
 }
 
+function lancamentoNoFiltro(l, cliente, mes, ano){
+  if(cliente && l.cliente !== cliente) return false;
+  if(mes === -1 && !ano) return true;
+  const contribs = getContribuicoes(l);
+  return contribs.some(c => {
+    if(!c.data) return false;
+    const anoC = c.data.slice(0,4);
+    const mesC = parseInt(c.data.slice(5,7),10) - 1;
+    return (!ano || anoC === ano) && (mes === -1 || mesC === mes);
+  });
+}
+
 function renderTabela(){
   const wrap = document.getElementById('tabela-lancamentos');
+
+  const clienteSel = document.getElementById('filtro-fat-cliente').value;
+  const mesSel = parseInt(document.getElementById('filtro-fat-mes').value, 10);
+  const anoSel = document.getElementById('filtro-fat-ano').value;
+
+  const lista = appData.lancamentos.filter(l => lancamentoNoFiltro(l, clienteSel, mesSel, anoSel));
+
   if(appData.lancamentos.length === 0){
     wrap.innerHTML = '<div class="empty">Nenhum lançamento cadastrado ainda.</div>';
+    return;
+  }
+  if(lista.length === 0){
+    wrap.innerHTML = '<div class="empty">Nenhum lançamento encontrado para este filtro.</div>';
     return;
   }
   let html = `<table><thead><tr>
@@ -416,7 +524,7 @@ function renderTabela(){
     <th>Recebimento</th><th>Recebido</th><th></th>
   </tr></thead><tbody>`;
 
-  appData.lancamentos.forEach(l => {
+  lista.forEach(l => {
     const parcelado = l.formaPagamento === 'Pix Parcelado';
     html += `<tr data-id="${l.id}">
       <td>${l.cliente}</td>
@@ -430,6 +538,7 @@ function renderTabela(){
       </td>
       <td>
         ${parcelado ? `<button class="btn-expand" data-id="${l.id}">Ver ▾</button>` : ''}
+        <button class="btn-expand" data-edit="${l.id}" title="Editar">Editar</button>
         <button class="btn-icon" data-del="${l.id}" title="Excluir">✕</button>
       </td>
     </tr>`;
@@ -475,6 +584,9 @@ function renderTabela(){
       btn.textContent = showing ? 'Ver ▾' : 'Ocultar ▴';
     });
   });
+  wrap.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.addEventListener('click', () => iniciarEdicao(btn.dataset.edit));
+  });
   wrap.querySelectorAll('[data-del]').forEach(btn => {
     btn.addEventListener('click', () => {
       if(!confirm('Excluir este lançamento?')) return;
@@ -491,6 +603,38 @@ function formatDateBR(iso){
   const [y,m,d] = iso.split('-');
   return `${d}/${m}/${y}`;
 }
+
+/* ======================= FILTROS DA ABA FATURAMENTO ======================= */
+const filtroFatCliente = document.getElementById('filtro-fat-cliente');
+const filtroFatMes = document.getElementById('filtro-fat-mes');
+const filtroFatAno = document.getElementById('filtro-fat-ano');
+
+function popularFiltrosFaturamento(){
+  const clienteAtual = filtroFatCliente.value;
+  const anoAtual = filtroFatAno.value;
+
+  const clientes = [...new Set(appData.lancamentos.map(l => l.cliente).filter(Boolean))].sort();
+  filtroFatCliente.innerHTML = '<option value="">Todos</option>' +
+    clientes.map(c => `<option value="${c}">${c}</option>`).join('');
+  if(clientes.includes(clienteAtual)) filtroFatCliente.value = clienteAtual;
+
+  if(filtroFatMes.options.length <= 1){
+    MESES.forEach((m, i) => {
+      const opt = document.createElement('option');
+      opt.value = i; opt.textContent = m;
+      filtroFatMes.appendChild(opt);
+    });
+  }
+
+  const anos = [...new Set(todasContribuicoes().map(c => c.data ? c.data.slice(0,4) : null).filter(Boolean))].sort();
+  filtroFatAno.innerHTML = '<option value="">Todos</option>' +
+    anos.map(a => `<option value="${a}">${a}</option>`).join('');
+  if(anos.includes(anoAtual)) filtroFatAno.value = anoAtual;
+}
+
+filtroFatCliente.addEventListener('change', renderTabela);
+filtroFatMes.addEventListener('change', renderTabela);
+filtroFatAno.addEventListener('change', renderTabela);
 
 /* ======================= DASHBOARD ======================= */
 let chartInstance = null;
@@ -575,6 +719,7 @@ function renderDashboard(){
   document.getElementById('in-data-unica').value = todayISO();
   await loadData();
   popularFiltros();
+  popularFiltrosFaturamento();
   renderTabela();
   renderDashboard();
 })();
