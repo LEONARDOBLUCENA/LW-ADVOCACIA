@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1784813005701zb2e3",
+      "cliente": "Roberto Felipe Flach",
+      "descricao": "Auxilio Acidente",
+      "valorTotal": 1104.83,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-06-16",
+      "recebido": false
+    },
+    {
       "id": "l17848129701309qgjn",
       "cliente": "Janete dos Santos",
       "descricao": "Auxilio Doenca",
