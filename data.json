@@ -1,6 +1,25 @@
 {
   "lancamentos": [
     {
+      "id": "l1784812830044w4ga7",
+      "cliente": "Terezinha Lima",
+      "descricao": "S/D",
+      "valorTotal": 1524,
+      "formaPagamento": "Pix Parcelado",
+      "parcelas": [
+        {
+          "data": "2026-06-10",
+          "valor": 762,
+          "recebido": false
+        },
+        {
+          "data": "2026-07-10",
+          "valor": 762,
+          "recebido": false
+        }
+      ]
+    },
+    {
       "id": "l17848127584033q47h",
       "cliente": "Mauro",
       "descricao": "S/D",
