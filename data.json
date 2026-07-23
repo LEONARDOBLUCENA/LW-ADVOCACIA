@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l17848133938200auw4",
+      "cliente": "Cirio Azevedo",
+      "descricao": "Auxilio Doenca",
+      "valorTotal": 1404.85,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-07-20",
+      "recebido": false
+    },
+    {
       "id": "l1784813358607f2u0n",
       "cliente": "Clasiele",
       "descricao": "Aux Doenca",
