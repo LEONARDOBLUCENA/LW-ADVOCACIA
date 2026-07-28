@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1785280020680h4kdt",
+      "cliente": "Neusa Rodrigues Andrade",
+      "descricao": "Auxilio doença com reabilitação",
+      "valorTotal": 385,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-07-28",
+      "recebido": false
+    },
+    {
       "id": "l17848133938200auw4",
       "cliente": "Cirio Azevedo",
       "descricao": "Auxilio Doenca",
