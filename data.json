@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l17854452853985r42h",
+      "cliente": "Cesar Fernando da Silva Paz",
+      "descricao": "Inexigibilidade de débito IPTU",
+      "valorTotal": 2810.12,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-07-30",
+      "recebido": false
+    },
+    {
       "id": "l178542519917733tqm",
       "cliente": "Janaine Ribeiro",
       "descricao": "Aux doença pagam parcial",
