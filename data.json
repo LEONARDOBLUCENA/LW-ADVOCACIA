@@ -60,7 +60,7 @@
         {
           "data": "2026-08-10",
           "valor": 1000,
-          "recebido": false
+          "recebido": true
         },
         {
           "data": "2026-09-10",
