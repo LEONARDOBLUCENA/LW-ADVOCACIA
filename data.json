@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l17866306776951tued",
+      "cliente": "Welter",
+      "descricao": "Assessoria julho",
+      "valorTotal": 4644.16,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-12",
+      "recebido": false
+    },
+    {
       "id": "l1786630544131k49hw",
       "cliente": "Vitor Kempf",
       "descricao": "Aux doença",
