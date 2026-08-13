@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1786630544131k49hw",
+      "cliente": "Vitor Kempf",
+      "descricao": "Aux doença",
+      "valorTotal": 358.87,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-13",
+      "recebido": false
+    },
+    {
       "id": "l17854452853985r42h",
       "cliente": "Cesar Fernando da Silva Paz",
       "descricao": "Inexigibilidade de débito IPTU",
