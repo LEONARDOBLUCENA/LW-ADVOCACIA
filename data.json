@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l17866423294662h59w",
+      "cliente": "Luciano Steffens",
+      "descricao": "Nathana",
+      "valorTotal": 150,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-13",
+      "recebido": false
+    },
+    {
       "id": "l17866306776951tued",
       "cliente": "Welter",
       "descricao": "Assessoria julho",
