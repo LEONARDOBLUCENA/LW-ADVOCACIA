@@ -135,7 +135,7 @@
         {
           "data": "2026-08-10",
           "valor": 3850,
-          "recebido": false
+          "recebido": true
         }
       ]
     },
