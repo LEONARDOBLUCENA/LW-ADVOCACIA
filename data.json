@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l17870647034019s9hd",
+      "cliente": "João Satler",
+      "descricao": "Larissa Persch (aposentadoria por invalidez)",
+      "valorTotal": 2227.67,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-17",
+      "recebido": false
+    },
+    {
       "id": "l17866423294662h59w",
       "cliente": "Luciano Steffens",
       "descricao": "Nathana",
