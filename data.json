@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1787596351366w6s9o",
+      "cliente": "Tais consulta",
+      "descricao": "Cliente Liana",
+      "valorTotal": 100,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-22",
+      "recebido": false
+    },
+    {
       "id": "l1787095919513a9ieb",
       "cliente": "Luiz Potter",
       "descricao": "Cliente Liana aux-doença",
