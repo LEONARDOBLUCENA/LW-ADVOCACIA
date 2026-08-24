@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1787601016465dz0og",
+      "cliente": "Cristiane Azevedo",
+      "descricao": "Aposentadoria por invalidez (Larissa)",
+      "valorTotal": 3454.48,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-24",
+      "recebido": false
+    },
+    {
       "id": "l1787596351366w6s9o",
       "cliente": "Tais consulta",
       "descricao": "Cliente Liana",
