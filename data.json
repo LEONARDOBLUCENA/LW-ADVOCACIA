@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l17879256795415wy09",
+      "cliente": "Neusa Rodrigues Andrade",
+      "descricao": "Aux doença (nathana)",
+      "valorTotal": 385,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-28",
+      "recebido": false
+    },
+    {
       "id": "l1787925568218jq1re",
       "cliente": "Fabio Branchi",
       "descricao": "Aux acid (Carolina B)",
