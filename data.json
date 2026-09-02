@@ -70,7 +70,7 @@
       "valorTotal": 150,
       "formaPagamento": "Pix",
       "dataRecebimento": "2026-08-13",
-      "recebido": false
+      "recebido": true
     },
     {
       "id": "l17866306776951tued",
@@ -79,7 +79,7 @@
       "valorTotal": 4644.16,
       "formaPagamento": "Pix",
       "dataRecebimento": "2026-08-12",
-      "recebido": false
+      "recebido": true
     },
     {
       "id": "l1786630544131k49hw",
