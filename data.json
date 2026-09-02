@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1788370210048xd2k9",
+      "cliente": "Liliane Lopes",
+      "descricao": "Aux doenca (Liana)",
+      "valorTotal": 392.58,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-09-02",
+      "recebido": false
+    },
+    {
       "id": "l1788370086500fmxj8",
       "cliente": "Welter Empreendimentos",
       "descricao": "Assessoria julho",
