@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1788370086500fmxj8",
+      "cliente": "Welter Empreendimentos",
+      "descricao": "Assessoria julho",
+      "valorTotal": 4863,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-08-10",
+      "recebido": false
+    },
+    {
       "id": "l17879256795415wy09",
       "cliente": "Neusa Rodrigues Andrade",
       "descricao": "Aux doença (nathana)",
