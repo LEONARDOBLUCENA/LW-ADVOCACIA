@@ -25,7 +25,7 @@
       "valorTotal": 4511.92,
       "formaPagamento": "Pix",
       "dataRecebimento": "2026-08-28",
-      "recebido": false
+      "recebido": true
     },
     {
       "id": "l1787601016465dz0og",
@@ -34,7 +34,7 @@
       "valorTotal": 3454.48,
       "formaPagamento": "Pix",
       "dataRecebimento": "2026-08-24",
-      "recebido": false
+      "recebido": true
     },
     {
       "id": "l1787596351366w6s9o",
