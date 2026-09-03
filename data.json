@@ -1,6 +1,15 @@
 {
   "lancamentos": [
     {
+      "id": "l1788467519642oufrh",
+      "cliente": "Celio",
+      "descricao": "Parceria recebido Liana",
+      "valorTotal": 178.61,
+      "formaPagamento": "Pix",
+      "dataRecebimento": "2026-09-03",
+      "recebido": false
+    },
+    {
       "id": "l1788370210048xd2k9",
       "cliente": "Liliane Lopes",
       "descricao": "Aux doenca (Liana)",
